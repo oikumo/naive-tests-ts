@@ -1,0 +1,21 @@
+{
+  "name": "naive-tests-ts",
+  "version": "1.0.8",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "pub": "npm publish --access public",
+    "test": "npx tsx runAll.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "typescript": "^5.8.3"
+  },
+  "author": "oikumo@gmail.com",
+  "license": "MIT",
+  "description": ""
+}
