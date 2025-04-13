@@ -4,7 +4,7 @@ import { TestRunnerError } from "../../src/runner/errors";
 export function assertEquailityTest() {
     equals(1, 1);
     equals(2, 2);
-    equals("s", 1);
+    equals("s", "s");
 
     /*
 
