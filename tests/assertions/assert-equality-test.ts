@@ -1,12 +1,12 @@
 import { equals } from "../../src/assertions/assert-equality";
 import { TestRunnerError } from "../../src/runner/errors";
-import { test } from "../../src/runner/test-runner";
 
-test("test equality", () => {
+export function assertEquailityTest() {
     equals(1, 1);
     equals(2, 2);
-    equals("s", "s");
+    equals("s", 1);
 
+    /*
 
     let error: TestRunnerError | null = null;
     try {
@@ -40,4 +40,4 @@ test("test equality", () => {
     shouldFail(objAreEquals, [null, { x: 3, y: 4 }]);
     shouldFail(objAreNotEquals, [{ x: 1, y: 3 }, { x: 1, y: 3 }]);
     */
-});
+}

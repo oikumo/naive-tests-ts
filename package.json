@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc",
     "pub": "npm publish --access public",
-    "test": "npx tsx runAll.ts"
+    "test": "npx tsx tests/run-all-tests.ts"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
