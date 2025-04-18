@@ -1,6 +1,3 @@
-
-
-
 /*
 export function sameArray(expected, actual, errorMessage) {
     const differences = [];
@@ -46,23 +43,22 @@ export function equalsArrayElements(expected, actual, errorMessage) {
 
 
 
-    
-    /*
-    const arr1 = [1,2,2];
-    const arr2 = [1,2,3];
-    equals(arr1, arr2);
-    */
 
-    //equals();
+/*
+const arr1 = [1,2,2];
+const arr2 = [1,2,3];
+equals(arr1, arr2);
+*/
 
-    /*
-    notEquals(1, 2);
-    shouldFail(equals, [1, 0]);
-    shouldFail(notEquals, [0, 0]);
-    objAreEquals({ x: 3, y: 4 }, { x: 3, y: 4 });
-    objAreNotEquals({ x: 1, c: '22' }, { x: 2 });
-    shouldFail(objAreEquals, [{ www: '22' }, { x: 3, y: 4 }]);
-    shouldFail(objAreEquals, [null, { x: 3, y: 4 }]);
-    shouldFail(objAreNotEquals, [{ x: 1, y: 3 }, { x: 1, y: 3 }]);
-    */
+//equals();
+
+/*
+notEquals(1, 2);
+shouldFail(equals, [1, 0]);
+shouldFail(notEquals, [0, 0]);
+objAreEquals({ x: 3, y: 4 }, { x: 3, y: 4 });
+objAreNotEquals({ x: 1, c: '22' }, { x: 2 });
+shouldFail(objAreEquals, [{ www: '22' }, { x: 3, y: 4 }]);
+shouldFail(objAreEquals, [null, { x: 3, y: 4 }]);
+shouldFail(objAreNotEquals, [{ x: 1, y: 3 }, { x: 1, y: 3 }]);
 */
