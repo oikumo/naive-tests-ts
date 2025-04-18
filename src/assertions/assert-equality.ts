@@ -26,6 +26,26 @@ function assertLiteralsArgs<T extends AllowedLiterals>(...t: Array<T>) {
     }
 }
 
+/**
+ * Asserts strict equality between two values of allowed literal types.
+ * Throws a detailed error message if values don't match, with optional custom message.
+ * 
+ * @template T - Type extending AllowedLiterals (typically primitive values: string, number, boolean, etc.)
+ * @param expected - The anticipated value for comparison
+ * @param actual - The received value to validate against expected
+ * @param errorMessage - Optional custom message to prepend to error details
+ * 
+ * @throws {Error} When values don't match, containing:
+ * - Custom message (if provided)
+ * - Expected/actual values comparison
+ * 
+ * @example Basic usage
+ * equals(42, 42); // No error
+ * 
+ * @example With custom message
+ * equals("hello", "world", "String mismatch occurred");
+ * // Throws: "String mismatch occurred \nexpected: hello actual: world"
+ */
 export function equals<T extends AllowedLiterals>(expected: T, actual: T, errorMessage: string | null = null) {
     assertLiteralsArgs(expected, actual);
 

@@ -4,3 +4,10 @@ export class TestRunnerError extends Error {
         this.name = "TestRunnerError";
       }
 }
+
+export class TestRunnerExpectedError extends Error {
+  constructor(message: string) {
+      super(`TestRunnerExpectedError: ${message}`);
+      this.name = "TestRunnerExpectedError";
+    }
+}
