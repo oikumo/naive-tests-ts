@@ -1,0 +1,2 @@
+[![npm version](https://badge.fury.io/js/naive-tests-ts.svg)](https://badge.fury.io/js/naive-tests-ts)
+![Node.js Package](https://github.com/oikumo/naive-tests-ts/workflows/Node.js%20Package/badge.svg?branch=release)
