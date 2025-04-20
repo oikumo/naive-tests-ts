@@ -91,13 +91,11 @@ class TestRunner implements ITestRunner{
         catch (err) {
             if (err instanceof TestRunnerError) {
                 errors.push("TEST RUNNER ERROR");
-                const time = `${(Date.now() - start) / 1000} sec`;
-                this.addResult(new TestResult(description, time, errors, err));
-                return;
-    
             } else {
                 errors.push(err);
             }
+            const time = `${(Date.now() - start) / 1000} sec`;
+            this.addResult(new TestResult(description, time, errors, err));
         }
     }
 
