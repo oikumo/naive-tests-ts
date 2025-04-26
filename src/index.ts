@@ -1,8 +1,12 @@
-import { equals } from './assertions/assert-equality';
+import { equals, notEquals } from './assertions/assert-equality';
+import { shouldFail, shouldFailWithArgs } from './assertions/assert-errors';
 import { runAll, test } from './runner/test-runner';
 
 export {
     runAll,
     equals,
+    notEquals,
+    shouldFail,
+    shouldFailWithArgs,
     test
 };

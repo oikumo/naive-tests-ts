@@ -61,6 +61,53 @@ export function equals<T extends AllowedLiterals>(expected: T, actual: T, errorM
     }
 }
 
+/**
+ * Asserts that two values of allowed literal types are not equal using strict equality (`!==`).
+ * Throws an error with a customizable message if the values are equal.
+ *
+ * @template T - Type extending `AllowedLiterals` (typically primitive literals)
+ * @param {T} element1 - The first value to compare
+ * @param {T} element2 - The second value to compare
+ * @param {string | null} [errorMessage=null] - Optional custom error message prefix
+ * @throws {Error} Throws an error when the values are strictly equal
+ * 
+ * @example
+ * // Basic usage
+ * notEquals(5, 10); // Does not throw
+ * 
+ * @example
+ * // Throwing an error
+ * try {
+ *   notEquals('apple', 'apple');
+ * } catch (err) {
+ *   console.error(err.message); // "values: apple and apple are equals, should be different"
+ * }
+ * 
+ * @example
+ * // Custom error message
+ * notEquals(true, true, 'Values must differ'); // Throws: "Values must differ \nvalues: true and true are equals..."
+ * 
+ * @note
+ * - Uses strict equality comparison (`!==`)
+ * - Relies on `assertLiteralsArgs` for input validation
+ * - Primitive values only (behavior with objects compares references)
+ * - NaN values will throw since NaN !== NaN evaluates to false
+ */
+export function notEquals<T extends AllowedLiterals>(element1: T, element2: T, errorMessage: string | null = null) {
+    assertLiteralsArgs(element1, element2);
+
+    const different = element1 !== element2;
+    
+    if (!different) {
+        let info = '';
+        if (errorMessage != null) {
+            info += `${errorMessage} \n`;
+        }
+        info += `values: ${element1} and ${element2} are equals, should be different`;
+        throw Error(info);
+    }
+}
+
 /*
 export function notEquals<T extends AllowedLiterals>(expected: T, actual: T, errorMessage: string | null = null) {
     if (!Literals.has(typeof expected) || !Literals.has(typeof actual)) {
