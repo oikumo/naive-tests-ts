@@ -14,8 +14,8 @@ export class TestRunner implements ITestRunner{
     private currentDir: Array<string>;
     static runnerResults = new TestRunnerResults();
 
-    constructor() {
-        this.currentDir = new Array<string>(path.join(process.cwd(), 'tests/runner/tests'));
+    constructor(localTestsPath = 'tests') {
+        this.currentDir = new Array<string>(path.join(process.cwd(), localTestsPath));
     }
 
     runAll() {
