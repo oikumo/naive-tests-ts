@@ -42,7 +42,7 @@ class TestRunner implements ITestRunner{
         }
     }
 
-    private processResults(err: Error , results: Array<TestResult>) {
+    private processResults(err: Error | null, results: Array<TestResult>) {
         if (err) {
             console.error(`test runner import fails - Error${err.message}`);
             process.exit(1);
