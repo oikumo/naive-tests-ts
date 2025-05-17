@@ -13,7 +13,7 @@ class TestRunner implements ITestRunner{
 
     private currentDir: Array<string>;
     private results: Array<TestResult> = new Array<TestResult>();
-    private runnerResults : TestRunnerResults | null = null;
+    private runnerResults = new TestRunnerResults();
 
     constructor() {
         this.currentDir = new Array<string>(path.join(process.cwd(), 'tests'));
@@ -48,7 +48,14 @@ class TestRunner implements ITestRunner{
             process.exit(1);
         }
     
-        this.runnerResults = new TestRunnerResults(results);
+        
+        this.runnerResults = new TestRunnerResults();
+        this.runnerResults.results = results;
+
+        this.runnerResults.passed = this.runnerResults.results.filter((result) => result.errors.length === 0);
+        this.runnerResults.failed = this.runnerResults.results.filter((result) => result.errors.length > 0);
+        this.runnerResults.runnerErrors = this.runnerResults.results.filter((result) => result.testRunnerError !== null);
+
         this.showResults();
 
         if (this.runnerResults.failed.length > 0) {
