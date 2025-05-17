@@ -2,9 +2,10 @@ import path from 'path';
 import { findFilesInDirectories } from '../utils/utils';
 import { TestResult } from './test-result';
 import { TestRunnerError } from './errors';
+import { TestRunnerResults } from './test-runner-results';
 
 interface ITestRunner {
-    processTest: (description: string, func: () => void) => void;
+    processTest: (description: string, func: (logs: Array<String> | null) => void) => void;
     runAll: () =>  void;
 }
 
@@ -12,6 +13,7 @@ class TestRunner implements ITestRunner{
 
     private currentDir: Array<string>;
     private results: Array<TestResult> = new Array<TestResult>();
+    #runnerResults : TestRunnerResults | null = null;
 
     constructor() {
         this.currentDir = new Array<string>(path.join(process.cwd(), 'tests'));
@@ -21,45 +23,6 @@ class TestRunner implements ITestRunner{
         this.clearResults();
         const files = findFilesInDirectories(new Set(this.currentDir));
         this.runTests(files, this.processResults);
-    }
-
-    private processResults(err: Error , results: Array<TestResult>) {
-        if (err) {
-            console.error(`test runner import fails - Error${err.message}`);
-            process.exit(1);
-        }
-    
-        const testsPassed = results.filter((result) => result.errors.length === 0);
-        const testsFailed = results.filter((result) => result.errors.length > 0);
-        const testsRunnerError = results.filter((result) => result.testRunnerError !== null);
-    
-        testsPassed.forEach((result) => {
-            console.log(result);
-        });
-    
-        testsFailed.forEach(result => {
-            console.error(result.info);
-            result.errors.forEach((err) => {
-                console.error(err);
-            });
-
-            if (result.testRunnerError) {
-                console.error(result.testRunnerError.message);
-            }
-        });
-
-        
-        console.log('\nTest Results');
-        console.log('------------');
-        console.log('\x1b[33m%s\x1b[0m', `Total: ${results.length}`);
-        console.log('\x1b[32m%s\x1b[0m', `Passed: ${testsPassed.length}`);
-        console.log('\x1b[31m%s\x1b[0m', `Failed: ${testsFailed.length}`);
-        console.log('\x1b[31m%s\x1b[0m', `testsRunnerError: ${testsRunnerError.length}`);
-        console.log('\n');
-
-        if (testsFailed.length > 0) {
-            process.exit(1);
-        }
     }
 
     private async runTests(files: Set<string>, cb: (err: any | null, result: Array<TestResult>) => any) {
@@ -77,16 +40,63 @@ class TestRunner implements ITestRunner{
             cb(err, this.results);
             return;
         }
-    };
+    }
 
-    processTest(description: string, func: () => void) {
+    private processResults(err: Error , results: Array<TestResult>) {
+        if (err) {
+            console.error(`test runner import fails - Error${err.message}`);
+            process.exit(1);
+        }
+    
+        this.#runnerResults = new TestRunnerResults(results);
+        this.showResults();
+
+        if (this.#runnerResults.failed.length > 0) {
+            process.exit(1);
+        }
+    }
+
+    private showResults() {
+        if (this.#runnerResults === null) return;
+
+        this.#runnerResults.passed.forEach((result) => {
+            console.log(result.info);
+        });
+    
+        this.#runnerResults.failed.forEach(result => {
+            console.error(result.info);
+            result.errors.forEach((err) => {
+                console.error(err);
+            });
+
+            if (result.testRunnerError) {
+                console.error(result.testRunnerError.message);
+            }
+        });
+
+        
+        console.log('\nTest Results');
+        console.log('------------');
+        console.log('\x1b[33m%s\x1b[0m', `Total: ${this.#runnerResults.results.length}`);
+        console.log('\x1b[32m%s\x1b[0m', `Passed: ${this.#runnerResults.passed.length}`);
+        console.log('\x1b[31m%s\x1b[0m', `Failed: ${this.#runnerResults.failed.length}`);
+        console.log('\x1b[31m%s\x1b[0m', `testsRunnerError: ${this.#runnerResults.runnerErrors.length}`);
+        console.log('\n');
+        
+
+
+    }
+
+    processTest(description: string, func: (logs: Array<string> | null) => void) {
         const start = Date.now();
         const errors = Array<any>();
     
+        const logs = new Array<string>();
+
         try {
-            func();
+            func(logs);
             const time = `${(Date.now() - start) / 1000} sec`;
-            this.addResult(new TestResult(description, time, errors));
+            this.addResult(new TestResult(description, time, errors, logs));
         }
         catch (err) {
             if (err instanceof TestRunnerError) {
