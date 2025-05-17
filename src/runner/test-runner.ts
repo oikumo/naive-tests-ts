@@ -13,7 +13,7 @@ class TestRunner implements ITestRunner{
 
     private currentDir: Array<string>;
     private results: Array<TestResult> = new Array<TestResult>();
-    #runnerResults : TestRunnerResults | null = null;
+    private runnerResults : TestRunnerResults | null = null;
 
     constructor() {
         this.currentDir = new Array<string>(path.join(process.cwd(), 'tests'));
@@ -48,22 +48,22 @@ class TestRunner implements ITestRunner{
             process.exit(1);
         }
     
-        this.#runnerResults = new TestRunnerResults(results);
+        this.runnerResults = new TestRunnerResults(results);
         this.showResults();
 
-        if (this.#runnerResults.failed.length > 0) {
+        if (this.runnerResults.failed.length > 0) {
             process.exit(1);
         }
     }
 
     private showResults() {
-        if (this.#runnerResults === null) return;
+        if (this.runnerResults === null) return;
 
-        this.#runnerResults.passed.forEach((result) => {
+        this.runnerResults.passed.forEach((result) => {
             console.log(result.info);
         });
     
-        this.#runnerResults.failed.forEach(result => {
+        this.runnerResults.failed.forEach(result => {
             console.error(result.info);
             result.errors.forEach((err) => {
                 console.error(err);
@@ -77,13 +77,13 @@ class TestRunner implements ITestRunner{
         
         console.log('\nTest Results');
         console.log('------------');
-        console.log('\x1b[33m%s\x1b[0m', `Total: ${this.#runnerResults.results.length}`);
-        console.log('\x1b[32m%s\x1b[0m', `Passed: ${this.#runnerResults.passed.length}`);
-        console.log('\x1b[31m%s\x1b[0m', `Failed: ${this.#runnerResults.failed.length}`);
-        console.log('\x1b[31m%s\x1b[0m', `testsRunnerError: ${this.#runnerResults.runnerErrors.length}`);
+        console.log('\x1b[33m%s\x1b[0m', `Total: ${this.runnerResults.results.length}`);
+        console.log('\x1b[32m%s\x1b[0m', `Passed: ${this.runnerResults.passed.length}`);
+        console.log('\x1b[31m%s\x1b[0m', `Failed: ${this.runnerResults.failed.length}`);
+        console.log('\x1b[31m%s\x1b[0m', `testsRunnerError: ${this.runnerResults.runnerErrors.length}`);
         console.log('\n');
         
-        this.#runnerResults.results.forEach((result) => {
+        this.runnerResults.results.forEach((result) => {
 
             console.log(result.info);
             result.consoleLogEntry.forEach((log) => {
