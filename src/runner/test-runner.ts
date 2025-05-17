@@ -83,8 +83,14 @@ class TestRunner implements ITestRunner{
         console.log('\x1b[31m%s\x1b[0m', `testsRunnerError: ${this.#runnerResults.runnerErrors.length}`);
         console.log('\n');
         
+        this.#runnerResults.results.forEach((result) => {
 
-
+            console.log(result.info);
+            result.consoleLogEntry.forEach((log) => {
+               console.log(log); 
+            });
+            console.log('\n');
+        });
     }
 
     processTest(description: string, func: (logs: Array<string> | null) => void) {
@@ -105,7 +111,7 @@ class TestRunner implements ITestRunner{
                 errors.push(err);
             }
             const time = `${(Date.now() - start) / 1000} sec`;
-            this.addResult(new TestResult(description, time, errors, err));
+            this.addResult(new TestResult(description, time, errors, logs, err));
         }
     }
 

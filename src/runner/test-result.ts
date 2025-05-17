@@ -13,7 +13,7 @@ export class TestResult {
     get consoleLogEntry() { return [...this.#consoleLogEntry]; }
     get testRunnerError() { return this.#testRunnerError?.clone(); }
 
-    constructor(info: string, time: string, errors: Array<string>,  consoleLogEntry: Array<String>, 
+    constructor(info: string, time: string, errors: Array<string>, consoleLogEntry: Array<String>, 
         testRunnerError: TestRunnerError | null = null) {
         this.#info = info;
         this.#time = time;
