@@ -49,9 +49,7 @@ class TestRunner implements ITestRunner{
         }
     
         
-        this.runnerResults = new TestRunnerResults();
         this.runnerResults.results = results;
-
         this.runnerResults.passed = this.runnerResults.results.filter((result) => result.errors.length === 0);
         this.runnerResults.failed = this.runnerResults.results.filter((result) => result.errors.length > 0);
         this.runnerResults.runnerErrors = this.runnerResults.results.filter((result) => result.testRunnerError !== null);
