@@ -9,14 +9,13 @@ interface ITestRunner {
     runAll: () =>  void;
 }
 
-class TestRunner implements ITestRunner{
+export class TestRunner implements ITestRunner{
 
     private currentDir: Array<string>;
-    private results: Array<TestResult> = new Array<TestResult>();
-    private runnerResults = new TestRunnerResults();
+    static runnerResults = new TestRunnerResults();
 
     constructor() {
-        this.currentDir = new Array<string>(path.join(process.cwd(), 'tests'));
+        this.currentDir = new Array<string>(path.join(process.cwd(), 'tests/runner/tests'));
     }
 
     runAll() {
@@ -25,7 +24,7 @@ class TestRunner implements ITestRunner{
         this.runTests(files, this.processResults);
     }
 
-    private async runTests(files: Set<string>, cb: (err: any | null, result: Array<TestResult>) => any) {
+    private async runTests(files: Set<string>, cb: (err: any | null, runnerResults: TestRunnerResults) => any) {
         const promises = new Array<Promise<any>>();
 
         for (const file of files) {
@@ -34,41 +33,39 @@ class TestRunner implements ITestRunner{
     
         try {
             await Promise.all(promises);
-            cb(null, this.results);
+            cb(null, TestRunner.runnerResults);
         }
         catch (err) {
-            cb(err, this.results);
+            cb(err, TestRunner.runnerResults);
             return;
         }
     }
 
-    private processResults(err: Error | null, results: Array<TestResult>) {
+    private processResults(err: Error | null, runnerResults: TestRunnerResults) {
         if (err) {
             console.error(`test runner import fails - Error${err.message}`);
             process.exit(1);
         }
     
         
-        this.runnerResults.results = results;
-        this.runnerResults.passed = this.runnerResults.results.filter((result) => result.errors.length === 0);
-        this.runnerResults.failed = this.runnerResults.results.filter((result) => result.errors.length > 0);
-        this.runnerResults.runnerErrors = this.runnerResults.results.filter((result) => result.testRunnerError !== null);
+        runnerResults.passed = runnerResults.results.filter((result) => result.errors.length === 0);
+        runnerResults.failed = runnerResults.results.filter((result) => result.errors.length > 0);
+        runnerResults.runnerErrors = runnerResults.results.filter((result) => result.testRunnerError !== null);
 
-        this.showResults();
 
-        if (this.runnerResults.failed.length > 0) {
+        TestRunner.showResults(runnerResults);
+
+        if (runnerResults.failed.length > 0) {
             process.exit(1);
         }
     }
 
-    private showResults() {
-        if (this.runnerResults === null) return;
-
-        this.runnerResults.passed.forEach((result) => {
+    static showResults(runnerResults: TestRunnerResults) {
+        runnerResults.passed.forEach((result) => {
             console.log(result.info);
         });
     
-        this.runnerResults.failed.forEach(result => {
+        runnerResults.failed.forEach(result => {
             console.error(result.info);
             result.errors.forEach((err) => {
                 console.error(err);
@@ -82,13 +79,13 @@ class TestRunner implements ITestRunner{
         
         console.log('\nTest Results');
         console.log('------------');
-        console.log('\x1b[33m%s\x1b[0m', `Total: ${this.runnerResults.results.length}`);
-        console.log('\x1b[32m%s\x1b[0m', `Passed: ${this.runnerResults.passed.length}`);
-        console.log('\x1b[31m%s\x1b[0m', `Failed: ${this.runnerResults.failed.length}`);
-        console.log('\x1b[31m%s\x1b[0m', `testsRunnerError: ${this.runnerResults.runnerErrors.length}`);
+        console.log('\x1b[33m%s\x1b[0m', `Total: ${runnerResults.results.length}`);
+        console.log('\x1b[32m%s\x1b[0m', `Passed: ${runnerResults.passed.length}`);
+        console.log('\x1b[31m%s\x1b[0m', `Failed: ${runnerResults.failed.length}`);
+        console.log('\x1b[31m%s\x1b[0m', `testsRunnerError: ${runnerResults.runnerErrors.length}`);
         console.log('\n');
         
-        this.runnerResults.results.forEach((result) => {
+        runnerResults.results.forEach((result) => {
 
             console.log(result.info);
             result.consoleLogEntry.forEach((log) => {
@@ -121,11 +118,14 @@ class TestRunner implements ITestRunner{
     }
 
     private clearResults() {
-        this.results.length = 0;
+        TestRunner.runnerResults.results.length = 0;
+        TestRunner.runnerResults.passed.length = 0;
+        TestRunner.runnerResults.failed.length = 0;
+        TestRunner.runnerResults.runnerErrors.length = 0;
     }
 
     private addResult(result: TestResult) {
-        this.results.push(result);
+        TestRunner.runnerResults.results.push(result);
     }
 }
 

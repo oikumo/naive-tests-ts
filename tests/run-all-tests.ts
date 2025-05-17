@@ -2,12 +2,14 @@ import { assertEquailityPassCases, assertEquailityFailCases } from "./assertions
 import { assertErrorFail, assertErrorPass } from "./assertions/assert-errors-test";
 import { FrameworkTestGroup } from "./framework-test-group";
 import { FrameworkResult } from "./framework-test-result";
+import { runnerPass } from "./runner/test-runner-test";
 
 const frameworkTest = new FrameworkTestGroup(
     assertEquailityPassCases, 
     assertEquailityFailCases,
     assertErrorPass,
-    assertErrorFail
+    assertErrorFail,
+    runnerPass
 );
 
 const results = new FrameworkResult(frameworkTest.run());
