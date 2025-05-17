@@ -18,10 +18,11 @@ export class TestRunner implements ITestRunner{
         this.currentDir = new Array<string>(path.join(process.cwd(), localTestsPath));
     }
 
-    runAll() {
+    async runAll() {
         this.clearResults();
         const files = findFilesInDirectories(new Set(this.currentDir));
-        this.runTests(files, this.processResults);
+        const results = await this.runTests(files, this.processResults);
+        return results;
     }
 
     private async runTests(files: Set<string>, cb: (err: any | null, runnerResults: TestRunnerResults) => any) {
@@ -39,6 +40,8 @@ export class TestRunner implements ITestRunner{
             cb(err, TestRunner.runnerResults);
             return;
         }
+
+        return TestRunner.runnerResults;
     }
 
     private processResults(err: Error | null, runnerResults: TestRunnerResults) {
