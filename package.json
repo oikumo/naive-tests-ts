@@ -1,6 +1,6 @@
 {
   "name": "naive-tests-ts",
-  "version": "1.0.23",
+  "version": "1.0.24",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": {
@@ -13,7 +13,7 @@
   "scripts": {
     "build": "tsc",
     "pub": "npm publish --access public",
-    "test": "npx tsx tests/run-all-tests.ts"
+    "test": "tsc && npx tsx tests/run-all-tests.ts"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

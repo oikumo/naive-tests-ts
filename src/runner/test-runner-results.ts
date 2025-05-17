@@ -4,7 +4,7 @@ export class TestRunnerResults {
     results: Array<TestResult>;
     passed: Array<TestResult>;
     failed: Array<TestResult>;
-    runnerError: Array<TestResult>;
+    runnerErrors: Array<TestResult>;
 
     constructor(results: Array<TestResult>) {
         this.results = new Array<TestResult>();
@@ -14,6 +14,6 @@ export class TestRunnerResults {
 
         this.passed = this.results.filter((result) => result.errors.length === 0);
         this.failed = this.results.filter((result) => result.errors.length > 0);
-        this.runnerError = this.results.filter((result) => result.testRunnerError !== null);
+        this.runnerErrors = this.results.filter((result) => result.testRunnerError !== null);
     }
 }
