@@ -1,8 +1,7 @@
 import { runAll } from "../../src";
 import { TestRunner } from "../../src/runner/process/test-runner";
-import { showTestRunnerResults } from "../../src/runner/results/test-runner-results-summary";
 
-const localTestDirectory = 'tests/runner/tests'; 
+const localTestDirectory = 'tests/runner/tests-pass-fail'; 
 const localTestPassDirectory = 'tests/runner/tests-pass'; 
 
 export async function runAllPass() {
@@ -10,17 +9,38 @@ export async function runAllPass() {
 }
 
 export async function runnerPass() {
-    const results = await runner();
-
-    if (results.testFailError !== false) {
+    const results = await runner(localTestPassDirectory);
+    const passed = 3;
+    const failed = 0;
+   
+    if (!results.testSuccess) {
         throw Error();
     }
-    if (results.passed.length === 0) {
+    if (passed !== results.passed.length) {
+        throw Error();
+    }
+    if (failed !== results.failed.length) {
         throw Error();
     }
 }
 
-async function runner() {
+export async function runnerPassAndFails() {
+    const results = await runner(localTestDirectory);
+    const passed = 2;
+    const failed = 2;
+
+    if (results.testSuccess) {
+        throw Error();
+    }
+    if (passed !== results.passed.length) {
+        throw Error();
+    }
+    if (failed !== results.failed.length) {
+        throw Error();
+    }
+}
+
+async function runner(localTestDirectory: string) {
     const testRunner = new TestRunner(localTestDirectory);
     const results = await testRunner.run();
 

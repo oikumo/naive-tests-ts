@@ -19,14 +19,15 @@ export class TestRunner {
         TestRunner.clearResults();
         const files = findFilesInDirectories(new Set(this.#currentDir));
         await this.runTests(files, (err: Error | null) => {
-            if (err) { TestRunner.runnerResults.testImportError = err; }
-            if (TestRunner.runnerResults.failed.length > 0 ) { 
-                TestRunner.runnerResults.testFailError = true;
+            if (err !== null) { 
+                TestRunner.runnerResults.testImportError = err; 
             }
         });
 
+        const results = TestRunner.runnerResults.clone();
+        TestRunner.clearResults();
 
-        return TestRunner.runnerResults.clone();
+        return results;
     }
 
     private async runTests(files: Set<string>, cb: (err: any | null, runnerResults: TestRunnerResults) => any) {

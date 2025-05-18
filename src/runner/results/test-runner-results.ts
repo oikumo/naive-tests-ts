@@ -4,8 +4,16 @@ import { TestResult } from './test-result';
 export class TestRunnerResults {
     results = new Array<TestResult>();
     testImportError: Error | null = null;
-    testFailError = false;
     
+    get testSuccess() {
+        if (this.results.filter((result) => result.errors.length > 0).length > 0) {
+            return false;
+        }
+        if (this.testImportError !== null) {
+            return false;
+        }
+        return true;
+    } 
 
     get passed() {
         return [...this.results.filter((result) => result.errors.length === 0)];
@@ -25,6 +33,7 @@ export class TestRunnerResults {
     clone() {
         const newResults = new TestRunnerResults();
         newResults.update(this.results);
+        newResults.testImportError = this.testImportError;
 
         return newResults;
     }

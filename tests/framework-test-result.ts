@@ -32,8 +32,8 @@ export class FrameworkResult {
         this.results = results;
     }
 
-    show() {
-        console.log(`\nTests Results`);
+    show(title: string) {
+        console.log(`\n${title}`);
         console.log('-------------');
         console.log('\x1b[32m%s\x1b[0m', `Pass: ${this.passed.length}`);
         console.error(`Fail: ${this.fails.length}`);

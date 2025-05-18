@@ -25,10 +25,10 @@ export function showTestRunnerResults(testRunnerResults: TestRunnerResults) {
     
     console.log('\nTest Results');
     console.log('------------');
-    console.log('\x1b[33m%s\x1b[0m', `Total: ${allResultsCount}`);
     console.log('\x1b[32m%s\x1b[0m', `Passed: ${passed.length}`);
     console.log('\x1b[31m%s\x1b[0m', `Failed: ${failed.length}`);
-    console.log('\x1b[31m%s\x1b[0m', `testsRunnerError: ${runnerErrors.length}`);
+    console.log('\x1b[31m%s\x1b[0m', `Tests Runner Errors: ${runnerErrors.length}`);
+    console.log(`Total: ${allResultsCount}`);
     console.log('\n');
     
 
