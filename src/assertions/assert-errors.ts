@@ -1,4 +1,4 @@
-import { TestRunnerError, TestRunnerExpectedError } from '../runner/errors';
+import { TestRunnerError, TestRunnerExpectedError } from '../runner/process/errors';
 
 type Lambda = () => void;
 type FunctionWithArgs = (...args: any[]) => any;

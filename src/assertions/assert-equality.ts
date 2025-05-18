@@ -1,4 +1,4 @@
-import { TestRunnerError } from "../runner/errors";
+import { TestRunnerError } from "../runner/process/errors";
 
 type AllowedLiterals = number | boolean | string;
 const Literals = new Set(['number', 'boolean', 'string']);

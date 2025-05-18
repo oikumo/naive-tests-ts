@@ -1,6 +1,6 @@
 import { equals } from '../../src/assertions/assert-equality';
 import { shouldFail, shouldFailWithArgs } from '../../src/assertions/assert-errors'
-import { TestRunnerExpectedError } from '../../src/runner/errors';
+import { TestRunnerExpectedError } from '../../src/runner/process/errors';
 
 export function assertErrorPass() {
     shouldFail(() => { throw Error(); });

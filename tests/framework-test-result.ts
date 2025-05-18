@@ -33,8 +33,10 @@ export class FrameworkResult {
     }
 
     show() {
-        console.log('\x1b[32m%s\x1b[0m', `passed: ${this.passed.length}`);
-        console.error(`fails: ${this.fails.length}`);
-        console.log('\x1b[32m%s\x1b[0m', `total: ${this.results.length}\n`);
+        console.log(`\nTests Results`);
+        console.log('-------------');
+        console.log('\x1b[32m%s\x1b[0m', `Pass: ${this.passed.length}`);
+        console.error(`Fail: ${this.fails.length}`);
+        console.log(`Total: ${this.results.length}\n`);
     }
 }

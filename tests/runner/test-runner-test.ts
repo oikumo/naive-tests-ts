@@ -1,12 +1,28 @@
-import { TestRunner } from "../../src/runner/test-runner";
+import { runAll } from "../../src";
+import { TestRunner } from "../../src/runner/process/test-runner";
+import { showTestRunnerResults } from "../../src/runner/results/test-runner-results-summary";
+
+const localTestDirectory = 'tests/runner/tests'; 
+const localTestPassDirectory = 'tests/runner/tests-pass'; 
+
+export async function runAllPass() {
+    await runAll(localTestPassDirectory, false);
+}
 
 export async function runnerPass() {
-    const testRunner = new TestRunner('tests/runner/tests');
-    const results = await testRunner.runAll();
+    const results = await runner();
 
-    if (!results) {
-        throw Error('runnerPass error');
+    if (results.testFailError !== false) {
+        throw Error();
     }
+    if (results.passed.length === 0) {
+        throw Error();
+    }
+}
 
-    console.log('pass:', results.results[0].info);
+async function runner() {
+    const testRunner = new TestRunner(localTestDirectory);
+    const results = await testRunner.run();
+
+    return results;
 }

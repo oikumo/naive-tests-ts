@@ -1,4 +1,4 @@
-import { TestRunnerError } from "./errors";
+import { TestRunnerError } from "../process/errors";
 
 export class TestResult {
     #info: string;
