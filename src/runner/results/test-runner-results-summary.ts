@@ -35,11 +35,11 @@ export function showTestRunnerResults(testRunnerResults: TestRunnerResults) {
     const logEntries = allResults.filter((result) => { return result.consoleLogEntry.length > 0; });
 
     if (logEntries.length > 0) {
-        console.log('Test log');
-        console.log('--------\n');
+        console.log('Tests log');
+        console.log('--------');
 
         logEntries.forEach((result) => {
-            console.log(`\nTest: ${result.info}`);
+            console.log('\x1b[32m%s\x1b[0m', `\nTest: ${result.info}`);
             result.consoleLogEntry.forEach((log) => {
                 console.log(log); 
             });
