@@ -31,10 +31,19 @@ export function showTestRunnerResults(testRunnerResults: TestRunnerResults) {
     console.log('\x1b[31m%s\x1b[0m', `testsRunnerError: ${runnerErrors.length}`);
     console.log('\n');
     
-    allResults.forEach((result) => {
-        console.log(result.info);
-        result.consoleLogEntry.forEach((log) => {
-            console.log(log); 
+
+    const logEntries = allResults.filter((result) => { return result.consoleLogEntry.length > 0; });
+
+    if (logEntries.length > 0) {
+        console.log('Test log');
+        console.log('--------\n');
+
+        logEntries.forEach((result) => {
+            console.log(`\nTest: ${result.info}`);
+            result.consoleLogEntry.forEach((log) => {
+                console.log(log); 
+            });
         });
-    });
+    }
+
 }

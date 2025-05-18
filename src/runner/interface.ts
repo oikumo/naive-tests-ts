@@ -75,7 +75,7 @@ export async function runAll(localTestsPath = 'tests', printResultsInConsole = t
 
     if (results.testImportError !== null) {
         if (printResultsInConsole) {
-            console.error(`Test Runner import test files error: ${results.testImportError.message}`);
+            console.error(`\nTest Runner import test files error: ${results.testImportError.message}`);
         }
         
         process.exit(1);
@@ -83,12 +83,12 @@ export async function runAll(localTestsPath = 'tests', printResultsInConsole = t
     
     if (results.failed.length > 0) {
         if (printResultsInConsole) {
-            console.error(`Test Runner tests failed: ${results.failed.length}`);
+            console.error(`\nTest Runner tests failed: ${results.failed.length}`);
         }
         process.exit(1);
     }
 
     if (printResultsInConsole) {
-        console.log('Test Runner execution success');
+        console.log('\nTest Runner execution success');
     }
 }
