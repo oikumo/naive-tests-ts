@@ -1,5 +1,7 @@
 import { equals, notEquals } from './assertions/assert-equality';
 import { shouldFail, shouldFailWithArgs } from './assertions/assert-errors';
+import { assertArrayEquals, assertArrayNotEquals } from './assertions/assert-equality-arrays';
+import { assertObjectEquals, assertObjectNotEquals } from './assertions/assert-equality-objects';
 import { runAll, test } from './runner/interface';
 
 export {
@@ -8,5 +10,9 @@ export {
     notEquals,
     shouldFail,
     shouldFailWithArgs,
-    test
+    test,
+    assertArrayEquals,
+    assertArrayNotEquals,
+    assertObjectEquals,
+    assertObjectNotEquals
 };

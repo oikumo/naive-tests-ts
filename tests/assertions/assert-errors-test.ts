@@ -5,11 +5,11 @@ import { TestRunnerExpectedError } from '../../src/runner/process/errors';
 export function assertErrorPass() {
     shouldFail(() => { throw Error(); });
     shouldFail(() => { equals(2,3); });
-    shouldFail(() => { equals(2,4); }, "Error: Fail expected");
+    shouldFail(() => { equals(2,4); }, "expected: 2 actual: 4 ");
 
     const testFunction = (a,b) => { equals(a,b); };
     shouldFailWithArgs(testFunction, [1,2]);
-    shouldFailWithArgs(testFunction, [1,2], "Error: Fail expected");
+    shouldFailWithArgs(testFunction, [1,2], "expected: 1 actual: 2 ");
 }
 
 export function assertErrorFail() {
