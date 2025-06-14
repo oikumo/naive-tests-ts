@@ -1,64 +1,107 @@
-/*
-export function sameArray(expected, actual, errorMessage) {
-    const differences = [];
+/**
+ * Recursively checks if two arrays are deeply equal.
+ * Elements are compared by strict equality (`===`). If elements are arrays,
+ * they are recursively compared using this function.
+ * Handles nested arrays and different data types within arrays (compared by strict equality).
+ *
+ * @template T - The type of elements in the arrays.
+ * @param {T[]} a - The first array.
+ * @param {T[]} b - The second array.
+ * @returns {boolean} True if the arrays are deeply equal, false otherwise.
+ */
+export function areArraysEqual<T>(a: T[], b: T[]): boolean {
+  if (a.length !== b.length) {
+    return false;
+  }
+  for (let i = 0; i < a.length; i++) {
+    const valA = a[i];
+    const valB = b[i];
 
-    if (expected.length !== actual.length) {
-        let info = '';
-        if (errorMessage) info += `${errorMessage} \n`;
-        info += `length doesn't match. expected length: ${expected.length} actual: ${actual.length} `;
-        throw new Error(info);
+    if (Array.isArray(valA) && Array.isArray(valB)) {
+      // If both values are arrays, recurse
+      if (!areArraysEqual(valA, valB)) {
+        return false;
+      }
+    } else if (valA !== valB) {
+      // For non-array values (including objects), use strict equality.
+      // This means objects are compared by reference.
+      return false;
     }
-    const actualLength = actual.length;
-
-    for (let i = 0; i < actualLength; i++) {
-        if (expected[i] !== actual[i]) {
-            differences.push({ index: i, expected: expected[i], actual: actual[i] });
-        }
-    }
-
-    if (differences.length > 0) {
-        let info = '';
-        if (errorMessage) info += `${errorMessage} \n`;
-        info += `arrays doesn't match`;
-        differences.forEach((diff) => {
-            info += `\nelement index: ${diff.index} expected: ${diff.expected} actual: ${diff.actual}`;
-        });
-        throw new Error(info);
-    }
+  }
+  return true;
 }
 
-export function sameArrayElementsOnly(expected, actual, errorMessage) {
-    sameArray(expected, actual, errorMessage);
+/**
+ * Asserts that two arrays are deeply equal.
+ * It checks for the same elements in the same order. Nested arrays are also compared deeply.
+ * Non-array inputs will cause an error.
+ *
+ * @template T - The type of elements in the arrays.
+ * @param {T[]} actual - The actual array.
+ * @param {T[]} expected - The expected array.
+ * @param {string} [message] - Optional custom message to include if the assertion fails.
+ *                             Note: Current implementation appends this message to a default error structure if provided,
+ *                             or constructs a default message if not. The primary error information about actual/expected
+ *                             values is always included.
+ * @throws {Error} If the arrays are not deeply equal, or if either `actual` or `expected` is not an array.
+ * @example
+ * import { assertArrayEquals } from './assert-equality-arrays';
+ *
+ * assertArrayEquals([1, [2, 3]], [1, [2, 3]]); // Passes
+ *
+ * try {
+ *   assertArrayEquals([1, 2, 3], [1, 2, 4], "Arrays should match");
+ * } catch (e) {
+ *   console.error(e.message); // Example: "Arrays are not equal. Expected: [1,2,4], Actual: [1,2,3]"
+ * }
+ *
+ * try {
+ *   assertArrayEquals(null, [1,2,3]);
+ * } catch (e) {
+ *   console.error(e.message); // "Both arguments must be arrays."
+ * }
+ */
+export function assertArrayEquals<T>(actual: T[], expected: T[], message?: string): void {
+  if (!Array.isArray(actual) || !Array.isArray(expected)) {
+    throw new Error("Both arguments must be arrays.");
+  }
+  if (!areArraysEqual(actual, expected)) {
+    let errorMessage = message ? `${message}: ` : '';
+    errorMessage += `Arrays are not equal. Expected: ${JSON.stringify(expected)}, Actual: ${JSON.stringify(actual)}`;
+    throw new Error(errorMessage);
+  }
 }
 
-export function equalsArrayElements(expected, actual, errorMessage) {
-    if (Object.getPrototypeOf(expected) !== Object.getPrototypeOf(actual)) {
-        let info = '';
-        if (errorMessage) info += `${errorMessage} \n`;
-        info += `prototypes doesn't match. expected proto: ${Object.getPrototypeOf(expected)} actual proto: ${Object.getPrototypeOf(actual)} `;
-        throw new Error(info);
-    }
-    sameArray(expected, actual, errorMessage);
+/**
+ * Asserts that two arrays are NOT deeply equal.
+ * It checks that the arrays differ either in length, element order, or element values.
+ * Nested arrays are also compared deeply. Non-array inputs will cause an error.
+ *
+ * @template T - The type of elements in the arrays.
+ * @param {T[]} actual - The actual array.
+ * @param {T[]} expected - The array that `actual` is expected not to be equal to.
+ * @param {string} [message] - Optional custom message to include if the assertion fails (i.e., if arrays are equal).
+ *                             Similar to assertArrayEquals, this message is prepended if provided.
+ * @throws {Error} If the arrays are deeply equal, or if either `actual` or `expected` is not an array.
+ * @example
+ * import { assertArrayNotEquals } from './assert-equality-arrays';
+ *
+ * assertArrayNotEquals([1, 2, 3], [1, 2, 4]); // Passes
+ * assertArrayNotEquals([1, [2, 3]], [1, [2, 4]]); // Passes
+ *
+ * try {
+ *   assertArrayNotEquals([1, 2, 3], [1, 2, 3], "Arrays should be different");
+ * } catch (e) {
+ *   console.error(e.message); // Example: "Arrays should be different: Arrays are equal. Expected not to be: [1,2,3]"
+ * }
+ */
+export function assertArrayNotEquals<T>(actual: T[], expected: T[], message?: string): void {
+  if (!Array.isArray(actual) || !Array.isArray(expected)) {
+    throw new Error("Both arguments must be arrays.");
+  }
+  if (areArraysEqual(actual, expected)) {
+    let errorMessage = message ? `${message}: ` : '';
+    errorMessage += `Arrays are equal. Expected not to be: ${JSON.stringify(expected)}`;
+    throw new Error(errorMessage);
+  }
 }
-
-
-
-
-/*
-const arr1 = [1,2,2];
-const arr2 = [1,2,3];
-equals(arr1, arr2);
-*/
-
-//equals();
-
-/*
-notEquals(1, 2);
-shouldFail(equals, [1, 0]);
-shouldFail(notEquals, [0, 0]);
-objAreEquals({ x: 3, y: 4 }, { x: 3, y: 4 });
-objAreNotEquals({ x: 1, c: '22' }, { x: 2 });
-shouldFail(objAreEquals, [{ www: '22' }, { x: 3, y: 4 }]);
-shouldFail(objAreEquals, [null, { x: 3, y: 4 }]);
-shouldFail(objAreNotEquals, [{ x: 1, y: 3 }, { x: 1, y: 3 }]);
-*/

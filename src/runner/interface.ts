@@ -3,67 +3,89 @@ import { TestRunner } from "./process/test-runner";
 import { showTestRunnerResults } from "./results/test-runner-results-summary";
 
 /**
- * Executes an individual test case and records its results
+ * Defines and registers a test case with the test runner.
+ * The test execution function can contain assertions and other test logic.
+ * It receives a `logs` array to which custom log messages can be pushed during the test.
  * 
- * This function:
- * 1. Times test execution duration
- * 2. Captures logs during test execution
- * 3. Handles both successful and failed test scenarios
- * 4. Records results to the TestRunner's internal state
- * 
- * @function test
- * @param {string} description - Human-readable test description/name
- * @param {(logs: Array<string> | null) => void} func - Test implementation function.
- *        Receives a mutable array for logging test-specific information.
- * 
+ * Note: While the `execution` function itself is currently processed synchronously by `processTest`,
+ * for asynchronous operations within a test (e.g., awaiting promises), ensure that
+ * `processTest` is adapted or the overall test runner handles promise resolutions
+ * or rejections from `execution` if it were to return a Promise. The `test` function
+ * itself does not currently await or handle promises returned by `execution`.
+ *
+ * @param {string} name - A descriptive name or title for the test case. This corresponds to the `info` parameter of `processTest`.
+ * @param {(logs: string[] | null) => void} execution - The function containing the test logic. This corresponds to the `func` parameter of `processTest`.
+ *                                                   It receives an array for logging; push messages to it.
+ *                                                   Throw an error within this function to fail the test.
  * @example
- * // Simple test case
- * test("should add numbers correctly", (logs) => {
+ * import { test, equals } from 'naive-tests-ts'; // Assuming 'equals' is an available assertion
+ *
+ * test("should correctly add two numbers", (logs) => {
  *   const result = 2 + 2;
- *   logs.push(`Addition result: ${result}`);
- *   if (result !== 4) throw new Error("Addition failed");
+ *   logs?.push(`Calculation: 2 + 2 = ${result}`); // Optional logging
+ *   equals(result, 4); // Assertion
  * });
  * 
- * @sideeffects
- * - Modifies TestRunner's internal results storage
- * - Mutates the provided logs array
- * - May add entries to TestRunner's error collection
+ * test("example of a test that might fail", (logs) => {
+ *   logs?.push("Attempting a risky operation...");
+ *   equals(true, false, "This assertion will fail");
+ * });
  * 
- * @errorhandling
- * - Catches all errors thrown by test function
- * - Distinguishes between TestRunnerErrors and other errors
- * - Records error details in test results
+ * // For asynchronous code within 'execution':
+ * // test("async conceptual test", (logs) => {
+ * //   myAsyncFunction().then(result => {
+ * //     logs?.push(`Async result: ${result}`);
+ * //     equals(result, expectedAsyncResult);
+ * //   }).catch(error => {
+ * //     logs?.push(`Async error: ${error.message}`);
+ * //     throw error; // Ensure the test fails by re-throwing or throwing a new error
+ * //   });
+ * //   // IMPORTANT: The 'test' function itself does not wait for promises from 'execution'.
+ * //   // The above async pattern might lead to tests finishing before async code completes
+ * //   // or error handling issues if not managed carefully within 'execution',
+ * //   // unless processTest is enhanced to handle promises from 'execution'.
+ * // });
  */
 export const test: typeof processTest = processTest;
 
 /**
- * Executes all test cases in the specified directory and handles the test results.
- * 
- * This function:
- * 1. Initializes a TestRunner with the provided tests directory path
- * 2. Runs all test cases
- * 3. Displays test results
- * 4. Handles exit codes based on test outcomes
- * 
+ * Runs all registered test cases.
+ * It discovers test files (assumed to be imported, thereby registering tests via the `test` function),
+ * executes them, and then typically displays a summary of the results to the console.
+ * The function will cause the Node.js process to exit with a status code of 1 (error)
+ * if there are any test import errors or if any test cases fail. Otherwise, it exits with code 0.
+ *
  * @async
- * @function runAll
- * @param {string} [localTestsPath='tests'] - Path to directory containing test files
- * @returns {Promise<void>} Does not return a value directly, but may exit the process
- * 
+ * @param {string} [localTestsPath='tests'] - The path to the directory containing test files,
+ *                                            relative to the current working directory.
+ * @param {boolean} [printResultsInConsole=true] - Whether to print a summary of test results to the console.
+ * @returns {Promise<void>} A promise that resolves when all tests have been run and results processed.
+ *                          Note that the Node.js process may exit before this promise technically resolves
+ *                          in the calling context if tests fail or import errors occur, due to `process.exit()`.
  * @example
- * // Run tests from default 'tests' directory
- * await runAll();
+ * import { runAll } from 'naive-tests-ts';
  * 
- * // Run tests from custom directory
- * await runAll('tests/my-tests');
+ * // Ensure your test files (which use the 'test' function) are imported before calling runAll.
+ * // e.g.: import './my-first-test-file';
+ * //       import './my-second-test-file';
  * 
- * @throws {Error} Will exit process with code 1 if:
- * - There are test import errors
- * - Any test cases fail
+ * (async () => {
+ *   try {
+ *     await runAll(); // Uses default 'tests' directory and prints results
+ *     // If execution reaches here, it means all tests passed and no import errors.
+ *     console.log("Test run completed successfully and all tests passed.");
+ *   } catch (error) {
+ *     // This catch block might not be reached if process.exit() is called internally by runAll.
+ *     // It's here for conceptual completeness if runAll's behavior regarding process.exit were different.
+ *     console.error("Test runner encountered an unexpected issue:", error);
+ *   }
+ * })();
  * 
- * @sideeffects
- * - Outputs test results to console
- * - May terminate process with exit code 0 (success) or 1 (failure)
+ * // Example with a custom tests path and disabling direct console output from runAll:
+ * // (async () => {
+ * //   await runAll('src/__tests__', false);
+ * //   // You might handle results.testImportError or results.failed manually here if not printing.
+ * // })();
  */
 export async function runAll(localTestsPath = 'tests', printResultsInConsole = true) {
     const testRunner = new TestRunner(localTestsPath);
