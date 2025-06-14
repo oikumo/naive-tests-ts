@@ -2,19 +2,19 @@ import { assertEquailityPassCases, assertEquailityFailCases } from "./assertions
 import { assertErrorFail, assertErrorPass } from "./assertions/assert-errors-test";
 import { FrameworkTestGroup, FrameworkTestGroupAsync } from "./framework-test-group";
 import { FrameworkResult } from "./framework-test-result";
-import { runAllPass, runnerPass, runnerPassAndFails } from "./runner/test-runner-test";
+import { runAllPassAsync, runnerPassAsync, runnerPassAndFailsAsync } from "./runner/test-runner-test";
 
 const frameworkTest = new FrameworkTestGroup(
     assertEquailityPassCases, 
     assertEquailityFailCases,
     assertErrorPass,
     assertErrorFail,
-    runAllPass
+    runAllPassAsync
 );
 
 const frameworkTestAsync = new FrameworkTestGroupAsync(
-    runnerPass(),
-    runnerPassAndFails()
+    runnerPassAsync(),
+    runnerPassAndFailsAsync()
 );
 
 async function runAllTest() {

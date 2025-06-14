@@ -4,16 +4,19 @@ import { TestRunner } from "../../src/runner/process/test-runner";
 const localTestDirectory = 'tests/runner/tests-pass-fail'; 
 const localTestPassDirectory = 'tests/runner/tests-pass'; 
 
-export async function runAllPass() {
+export async function runAllPassAsync() {
     await runAll(localTestPassDirectory, false);
 }
 
-export async function runnerPass() {
+export async function runnerPassAsync() {
     const results = await runner(localTestPassDirectory);
     const passed = 3;
     const failed = 0;
+    const expectedSuccess = true;
+
+    const expectedResult = expectedSuccess === results.testSuccess;
    
-    if (!results.testSuccess) {
+    if (!expectedResult) {
         throw Error();
     }
     if (passed !== results.passed.length) {
@@ -24,14 +27,17 @@ export async function runnerPass() {
     }
 }
 
-export async function runnerPassAndFails() {
+export async function runnerPassAndFailsAsync() {
     const results = await runner(localTestDirectory);
     const passed = 2;
     const failed = 2;
-
-    if (results.testSuccess) {
+    const expectedSuccess = false;
+    
+    const expectedResult = expectedSuccess === results.testSuccess;
+    if (!expectedResult) {
         throw Error();
     }
+
     if (passed !== results.passed.length) {
         throw Error();
     }
