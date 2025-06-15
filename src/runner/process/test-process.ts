@@ -12,25 +12,25 @@ export async function processTest(info: string, func: (logs: Array<string> | nul
         if (result && typeof result.then === 'function' && typeof result.catch === 'function') {
             await result;
         }
+        // If promise resolved or sync function completed without error:
         const time = `${(Date.now() - start) / 1000} sec`;
         TestRunner.addResult(new TestResult(info, time, errors, logs));
     }
-    catch (err) {
-
+    catch (err: any) { // Catch synchronous errors or promise rejections
         if (err instanceof Error) {
             errors.push(err.message);
-
         } else {
-            errors.push("Undefined error");
+            // Handle cases where non-Error types might be thrown/rejected
+            errors.push(String(err));
         }
 
         const time = `${(Date.now() - start) / 1000} sec`;
 
+        // Assuming TestRunnerError is a specific type of Error
         if (err instanceof TestRunnerError) {
             TestRunner.addResult(new TestResult(info, time, errors, logs, err));
         } else {
             TestRunner.addResult(new TestResult(info, time, errors, logs));
         }
-
     }
 }
