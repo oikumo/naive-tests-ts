@@ -37,43 +37,33 @@ import { showTestRunnerResults } from "./results/test-runner-results-summary";
 export const test: typeof processTest = processTest;
 
 /**
- * Runs all registered test cases.
- * It discovers test files (assumed to be imported, thereby registering tests via the `test` function),
- * executes them, and then typically displays a summary of the results to the console.
- * The function will cause the Node.js process to exit with a status code of 1 (error)
- * if there are any test import errors or if any test cases fail. Otherwise, it exits with code 0.
+ * Executes all test cases in the specified directory and handles the test results.
+ *
+ * This function:
+ * 1. Initializes a TestRunner with the provided tests directory path
+ * 2. Runs all test cases
+ * 3. Displays test results
+ * 4. Handles exit codes based on test outcomes
  *
  * @async
- * @param {string} [localTestsPath='tests'] - The path to the directory containing test files,
- *                                            relative to the current working directory.
- * @param {boolean} [printResultsInConsole=true] - Whether to print a summary of test results to the console.
- * @returns {Promise<void>} A promise that resolves when all tests have been run and results processed.
- *                          Note that the Node.js process may exit before this promise technically resolves
- *                          in the calling context if tests fail or import errors occur, due to `process.exit()`.
+ * @function runAll
+ * @param {string} [localTestsPath='tests'] - Path to directory containing test files
+ * @returns {Promise<void>} Does not return a value directly, but may exit the process
+ *
  * @example
- * import { runAll } from 'naive-tests-ts';
+ * // Run tests from default 'tests' directory
+ * await runAll();
  * 
- * // Ensure your test files (which use the 'test' function) are imported before calling runAll.
- * // e.g.: import './my-first-test-file';
- * //       import './my-second-test-file';
+ * // Run tests from custom directory
+ * await runAll('tests/my-tests');
  * 
- * (async () => {
- *   try {
- *     await runAll(); // Uses default 'tests' directory and prints results
- *     // If execution reaches here, it means all tests passed and no import errors.
- *     console.log("Test run completed successfully and all tests passed.");
- *   } catch (error) {
- *     // This catch block might not be reached if process.exit() is called internally by runAll.
- *     // It's here for conceptual completeness if runAll's behavior regarding process.exit were different.
- *     console.error("Test runner encountered an unexpected issue:", error);
- *   }
- * })();
+ * @throws {Error} Will exit process with code 1 if:
+ * - There are test import errors
+ * - Any test cases fail
  * 
- * // Example with a custom tests path and disabling direct console output from runAll:
- * // (async () => {
- * //   await runAll('src/__tests__', false);
- * //   // You might handle results.testImportError or results.failed manually here if not printing.
- * // })();
+ * @sideeffects
+ * - Outputs test results to console
+ * - May terminate process with exit code 0 (success) or 1 (failure)
  */
 export async function runAll(localTestsPath = 'tests', printResultsInConsole = true) {
     const testRunner = new TestRunner(localTestsPath);
